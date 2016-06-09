@@ -564,7 +564,10 @@
             "EMPTY": "Currently there are no tags",
             "EMPTY_SEARCH": "It looks like nothing was found with your search criteria",
             "ACTION_ADD": "Add tag",
-            "NEW_TAG": "New tag"
+            "NEW_TAG": "New tag",
+            "MIXING_HELP_TEXT": "Select the tags that you want to merge",
+            "MIXING_MERGE": "Merge",
+            "SELECTED": "Selected"
         },
         "ROLES": {
             "PAGE_TITLE": "Roles - {{projectName}}",

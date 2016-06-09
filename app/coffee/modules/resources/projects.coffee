@@ -89,7 +89,11 @@ resourceProvider = ($config, $repo, $http, $urls, $auth, $q, $translate) ->
 
     service.createTag = (projectId, tag, color) ->
         url = "#{$urls.resolve("projects")}/#{projectId}/create_tag"
-        return $http.post(url, {tag: tag, color: color})
+        data = {}
+        data.tag = tag
+        if color
+            data.color = color
+        return $http.post(url, data)
 
     service.editTag = (projectId, from_tag, to_tag, color) ->
         url = "#{$urls.resolve("projects")}/#{projectId}/edit_tag"
@@ -100,6 +104,10 @@ resourceProvider = ($config, $repo, $http, $urls, $auth, $q, $translate) ->
         if color
             data.color = color
         return $http.post(url, data)
+
+    service.mixTags = (projectId, to_tag, from_tags) ->
+        url = "#{$urls.resolve("projects")}/#{projectId}/mix_tags"
+        return $http.post(url, {to_tag: to_tag, from_tags: from_tags})
 
     service.export = (projectId) ->
         url = "#{$urls.resolve("exporter")}/#{projectId}"

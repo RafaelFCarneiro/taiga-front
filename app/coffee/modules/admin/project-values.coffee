@@ -733,6 +733,35 @@ class ProjectTagsController extends taiga.Controller
             to_tag = null
         return @rs.projects.editTag(@scope.projectId, from_tag, to_tag, color)
 
+    startMixingTags: (tag) =>
+        @scope.mixingTags.toTag = tag.name
+
+    toggleMixingFromTags: (tag) =>
+        if tag.name != @scope.mixingTags.toTag
+            index = @scope.mixingTags.fromTags.indexOf(tag.name)
+            if index == -1
+                @scope.mixingTags.fromTags.push(tag.name)
+            else
+                @scope.mixingTags.fromTags.splice(index, 1)
+
+    confirmMixingTags: () =>
+        toTag = @scope.mixingTags.toTag
+        fromTags = @scope.mixingTags.fromTags
+        @rs.projects.mixTags(@scope.projectId, toTag, fromTags).then =>
+            @.cancelMixingTags()
+            @.loadTags()
+
+    cancelMixingTags: () =>
+        @scope.mixingTags.toTag = null
+        @scope.mixingTags.fromTags = []
+
+    mixingClass: (tag) =>
+        if @scope.mixingTags.toTag != null
+            if tag.name == @scope.mixingTags.toTag
+                return "mixing-tags-to"
+            else if @scope.mixingTags.fromTags.indexOf(tag.name) != -1
+                return "mixing-tags-from"
+
 module.controller("ProjectTagsController", ProjectTagsController)
 
 
@@ -749,7 +778,7 @@ ProjectTagsDirective = ($log, $repo, $confirm, $location, animationFrame, $trans
         initializeNewValue = ->
             $scope.newValue = {
                 "name": ""
-                "color": ""
+                "color": null
             }
 
         initializeTagsFilter = ->
@@ -757,11 +786,18 @@ ProjectTagsDirective = ($log, $repo, $confirm, $location, animationFrame, $trans
                 "name": ""
             }
 
+        initializeMixingTags = ->
+            $scope.mixingTags = {
+                "toTag": null,
+                "fromTags": []
+            }
+
         initializeTextTranslations = ->
             $scope.addNewElementText = $translate.instant("ADMIN.PROJECT_VALUES_TAGS.ACTION_ADD")
 
         initializeNewValue()
         initializeTagsFilter()
+        initializeMixingTags()
         initializeTextTranslations()
 
         $rootscope.$on "$translateChangeEnd", ->
@@ -836,6 +872,30 @@ ProjectTagsDirective = ($log, $repo, $confirm, $location, animationFrame, $trans
             event.preventDefault()
             $el.find(".new-value").addClass("hidden")
             initializeNewValue()
+
+        $el.on "click", ".mix-tags", (event) ->
+            event.preventDefault()
+            target = angular.element(event.currentTarget)
+            $scope.$apply ->
+                $ctrl.startMixingTags(target.parents('form').scope().tag)
+
+        $el.on "click", ".mixing-row", (event) ->
+            event.preventDefault()
+            target = angular.element(event.currentTarget)
+            $scope.$apply ->
+                $ctrl.toggleMixingFromTags(target.parents('form').scope().tag)
+
+        $el.on "click", ".mixing-confirm", (event) ->
+            event.preventDefault()
+            event.stopPropagation()
+            $scope.$apply ->
+                $ctrl.confirmMixingTags()
+
+        $el.on "click", ".mixing-cancel", (event) ->
+            event.preventDefault()
+            event.stopPropagation()
+            $scope.$apply ->
+                $ctrl.cancelMixingTags()
 
         $el.on "click", ".edit-value", (event) ->
             event.preventDefault()

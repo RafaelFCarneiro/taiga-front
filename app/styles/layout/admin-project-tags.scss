@@ -1,4 +1,4 @@
-.colors-table {
+.tags-table {
     .table-tags-editor {
         input[type="text"] {
             background-color: transparent;
@@ -12,7 +12,7 @@
             }
         }
         .row {
-            &.tag-row {
+            &.header-tag-row {
                 padding-left: 1rem;
             }
         }
@@ -22,12 +22,38 @@
             flex-grow: 1;
             padding: 0 10px;
             position: relative;
+            input {
+                padding: 0;
+            }
         }
     }
-    .table-admin-tags {
-        .row {
+    .row {
+        &.tag-row {
+            margin: .3rem 0;
+            padding: .7rem;
+
             &.edition {
                 padding-left: 1rem;
+            }
+        }
+    }
+    .mixing-row {
+        margin: .3rem 0;
+        padding: .7rem;
+
+        &.mixing-tags-from,
+        &.mixing-tags-to {
+            background: lighten($primary, 60%);
+        }
+        .mixing-confirm {
+            margin: 0 1rem;
+        }
+        .mixing-help-text {
+            color: $gray-light;
+        }
+        .mixing-cancel {
+            .icon {
+                opacity: 1;
             }
         }
     }
